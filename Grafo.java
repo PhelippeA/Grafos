@@ -13,6 +13,12 @@ public class Grafo
     
     public int vi, vf, nV;
 
+    public void listaCidades()
+    {
+        for (int i = 0; i < vertices.length; i++) {
+            System.out.printf("%d -> %s", i+1,vertices[i]);    
+        }
+    }
     public void informaAresta()
     {
         System.out.print("Cidade inicial: ");
@@ -22,13 +28,19 @@ public class Grafo
     }
     public void insereVertice(int [][]G)
     {
-        System.out.print("Informe a cidade a ser adicionada: ");
-        String v = entrada.nextLine();
-        v.length();
-        //Precisa desenvolver a logica ainda
-        for (int i = 0; i < nV; i++) {
+        if(nV == 10) {
+            System.out.print("Não há espaço para adicionar outra cidade. Deseja apagar alguma ?\n0 -> Não\n1 -> Sim\nOp: ");
+            int op = Integer.parseInt(entrada.nextLine());
             
+            if(op == 1)
+                removeVertice(G);
+            else 
+                return;    
         }
+        System.out.print("Informe a cidade a ser adicionada: ");
+        String cidade = entrada.nextLine();    
+        vertices[nV] = cidade;
+        G[nV][nV] = 1;
         nV ++;
     }
     // carrega o grafo do arquivo para a matriz
@@ -41,16 +53,14 @@ public class Grafo
             String aresta;
             String[] tokens;
 
-            if (!arq.exists())
-            {
-                System.out.println("Arquivo com o grafo inexistente.");
-                return (0);
-            } else 
-            {
+            if (arq.exists()) {
                 numVertices = Integer.parseInt(bufLeitura.readLine());
                 for (i = 0; i < numVertices; i++) {
                     nomes[i] = bufLeitura.readLine();
                 }
+            } else {
+                System.out.println("Arquivo com o grafo inexistente.");
+                return (0);
             }
 
             numArestas = Integer.parseInt(bufLeitura.readLine());
@@ -70,39 +80,40 @@ public class Grafo
     // remove um vértice (sua linha e sua coluna da matriz)
     public void removeVertice(int[][] G)
     {
-        int i, j, n;
+        int i, j, codCidade;
         
-        System.out.printf("Informe a cidade a ser removida");
-        n = Integer.parseInt(entrada.nextLine());
+        System.out.printf("Informe o código da cidade a ser removida");
+        listaCidades();
+        codCidade = Integer.parseInt(entrada.nextLine());
 
-        for (j = 0; j <= n - 1; j++) {
-            for (i = n; i < G.length - 1; i++) {
+        for (j = 0; j <= codCidade - 1; j++) {
+            for (i = codCidade; i < nV- 1; i++) {
                 G[i][j] = G[i+1][j];
             }
             G[i][j] = 0;
         }
           
 
-        for (i = 0; i <= n - 1; i++) {
-            for (j = n; j < G.length - 1; j++) {
+        for (i = 0; i <= codCidade - 1; i++) {
+            for (j = codCidade; j < nV - 1; j++) {
                 G[i][j] = G[i][j+1];
             }
             G[i][j] = 0;
         }
 
-        for (i = n; i < G.length - 1; i++) {
-            for (j = n; j < G.length - 1; j++) {
+        for (i = codCidade; i < nV - 1; i++) {
+            for (j = codCidade; j < nV - 1; j++) {
                 G[i][j] = G[i+1][j+1];
             }
         } 
 
-        for (i = n; i < G.length - 1; i++){
-            G[i][G.length-1] = 0; 
+        for (i = codCidade; i < nV - 1; i++){
+            G[i][nV-1] = 0; 
         }    
-        for (j = n; j < G.length - 1; j++){
-            G[G.length-1][j] = 0;
+        for (j = codCidade; j < nV - 1; j++){
+            G[nV-1][j] = 0;
         }
-        G[G.length-1][G.length-1] = 0;
+        G[nV-1][nV-1] = 0;
         nV --;
     }    
 
